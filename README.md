@@ -25,7 +25,7 @@ Batch is 'batch processing' - running a bunch of things at once.  Batch scripts 
 sbatch my_script.sh
 ````
 
-Bash scripts are (Borne Again) shell scripts. They are lists of instructions which are _exectuted_ when you run the script like so:
+Bash scripts are (Borne Again) shell scripts. They are lists of instructions which are _executed_ when you run the script like so:
 
 ````
 bash my_bash_script.sh
@@ -36,8 +36,6 @@ or if the bash script has been made executable  `chmod +x my_bash_script.sh`, ba
 ````
 ./my_bash_script.sh 
 ````
-
-
 
 #### Slurm instructions go at the start of the batch script
 
@@ -61,6 +59,8 @@ The `#SBATCH -n 10 ` will be ingored and you will get the default value for the 
 my_cool_science
 ````
 You will get 10 tasks.
+
+**Note:** For the difference between `-n/--ntasks`, `-N/--nodes`, `-c/--cpus-per-task`, and `--ntasks-per-node`, there's a good [stackoverflow answer here](https://stackoverflow.com/questions/51139711/hpc-cluster-select-the-number-of-cpus-and-threads-in-slurm-sbatch).
 
 #### Output when using a batch script
 What would normally go to the screen goes to a file. You may have heard the terms 'standard out' and 'standard errror'.   You can have output and error go to different files: 
@@ -185,11 +185,13 @@ jobID_2=$(sbatch --dependency=afterok:$jobID_1 analysis.sh | cut -f 4 -d' ')
 sbatch  --dependency=afterany:$jobID_2  postprocessing.sh
 ````
 
+`afterok:$jobID_1` means the job can begin after `$jobID_1` has finished with an exit code of zero, i.e. no immediate errors. `afterany:$jobID_2` means the job can begin after `$jobID_2` has finished, regardless of whether it errored out or not. Jobs can depend on multiple job ids, not just one. [More on Job Dependencies](https://hpc.nih.gov/docs/job_dependencies.html).
+
 To run this script use:
 
 `bash ./dependent_jobs`
 
-Note this is a bash script, not at batch script.
+Note this is a bash script, not a batch script.
 
 
 # Scripting Scripts
